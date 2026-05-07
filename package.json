@@ -1,0 +1,10 @@
+{
+  "name": "fizzup-sales-manager",
+  "version": "1.0.0",
+  "description": "FizzUp Sales Manager - Root scripts",
+  "scripts": {
+    "seed": "node backend/config/seedData.js",
+    "backend": "node backend/node_modules/.bin/nodemon backend/server.js",
+    "frontend": "node frontend/node_modules/.bin/vite --config frontend/vite.config.js"
+  }
+}
