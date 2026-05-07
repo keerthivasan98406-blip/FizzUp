@@ -4,29 +4,28 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 
-// Always load .env from the backend folder
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const connectDB = require('./config/db');
-
-// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Middleware
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+// CORS — allow all origins for Render
+app.use(cors({
+  origin: '*',
+  credentials: true,
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ensure uploads directory exists
+// Uploads
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-
-// Serve uploaded images statically
 app.use('/uploads', express.static(uploadsDir));
 
-// Routes
+// API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/sales', require('./routes/salesRoutes'));
@@ -36,10 +35,16 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'FizzUp API is running 🚀' });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' });
-});
+// Serve frontend build in production
+if (process.env.NODE_ENV === 'production') {
+  const frontendBuild = path.join(__dirname, '..', 'frontend', 'dist');
+  if (fs.existsSync(frontendBuild)) {
+    app.use(express.static(frontendBuild));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(frontendBuild, 'index.html'));
+    });
+  }
+}
 
 // Error handler
 app.use((err, req, res, next) => {
@@ -50,5 +55,4 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 FizzUp Server running on port ${PORT}`);
-  console.log(`   API: http://localhost:${PORT}/api/health`);
 });

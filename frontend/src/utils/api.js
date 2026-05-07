@@ -1,11 +1,17 @@
 import axios from 'axios';
 
+// In production (Render), use the backend URL from env variable
+// In development, use Vite proxy (/api)
+const baseURL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Request interceptor to attach token
+// Attach token to every request
 api.interceptors.request.use(
   (config) => {
     const stored = localStorage.getItem('fizzup_user');
@@ -18,7 +24,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for auth errors
+// Handle 401
 api.interceptors.response.use(
   (response) => response,
   (error) => {
