@@ -1,28 +1,15 @@
 services:
-  # ── Backend API ──────────────────────────────────────────
   - type: web
-    name: fizzup-backend
+    name: fizzup-app
     runtime: node
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend
+    startCommand: npm start --prefix backend
     envVars:
       - key: NODE_ENV
         value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
       - key: PORT
         value: 5000
-      - key: MONGODB_URI
-        sync: false   # Set this manually in Render dashboard
-      - key: JWT_SECRET
-        sync: false   # Set this manually in Render dashboard
-
-  # ── Frontend ─────────────────────────────────────────────
-  - type: web
-    name: fizzup-frontend
-    runtime: node
-    rootDir: frontend
-    buildCommand: npm install && npm run build
-    startCommand: npx serve -s dist -l 3000
-    envVars:
-      - key: VITE_API_URL
-        sync: false   # Set to your backend URL e.g. https://fizzup-backend.onrender.com

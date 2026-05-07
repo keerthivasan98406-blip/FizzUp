@@ -11,12 +11,7 @@ connectDB();
 
 const app = express();
 
-// CORS — allow all origins for Render
-app.use(cors({
-  origin: '*',
-  credentials: true,
-}));
-
+app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,15 +30,18 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'FizzUp API is running 🚀' });
 });
 
-// Serve frontend build in production
-if (process.env.NODE_ENV === 'production') {
-  const frontendBuild = path.join(__dirname, '..', 'frontend', 'dist');
-  if (fs.existsSync(frontendBuild)) {
-    app.use(express.static(frontendBuild));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(frontendBuild, 'index.html'));
-    });
-  }
+// ── Serve React frontend build ──────────────────────────
+const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  // All non-API routes → React app
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({ message: 'FizzUp API running. Frontend not built yet.' });
+  });
 }
 
 // Error handler
@@ -54,5 +52,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 FizzUp Server running on port ${PORT}`);
+  console.log(`🚀 FizzUp running on port ${PORT}`);
 });
