@@ -1,5 +1,10 @@
 const Product = require('../models/Product');
-const { cloudinary } = require('../config/cloudinary');
+
+// Convert buffer to Base64 data URL
+const toBase64 = (file) => {
+  if (!file) return null;
+  return `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+};
 
 // @desc    Get all products
 const getProducts = async (req, res) => {
@@ -31,8 +36,8 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const { name, price, stock, category } = req.body;
-    // Cloudinary gives full URL in req.file.path
-    const image = req.file ? req.file.path : '';
+    // Convert uploaded image to Base64 and store in MongoDB
+    const image = req.file ? toBase64(req.file) : '';
     const product = await Product.create({ name, price, stock, category, image });
     res.status(201).json(product);
   } catch (error) {
@@ -48,15 +53,8 @@ const updateProduct = async (req, res) => {
 
     const { name, price, stock, category, isActive } = req.body;
 
-    // If new image uploaded via Cloudinary
-    if (req.file) {
-      // Delete old image from Cloudinary if exists
-      if (product.image && product.image.includes('cloudinary')) {
-        const publicId = product.image.split('/').slice(-2).join('/').split('.')[0];
-        await cloudinary.uploader.destroy(publicId).catch(() => {});
-      }
-      product.image = req.file.path;
-    }
+    // Update image only if new one uploaded
+    if (req.file) product.image = toBase64(req.file);
 
     if (name !== undefined) product.name = name;
     if (price !== undefined) product.price = price;
@@ -76,13 +74,6 @@ const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
-
-    // Delete from Cloudinary
-    if (product.image && product.image.includes('cloudinary')) {
-      const publicId = product.image.split('/').slice(-2).join('/').split('.')[0];
-      await cloudinary.uploader.destroy(publicId).catch(() => {});
-    }
-
     await product.deleteOne();
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
