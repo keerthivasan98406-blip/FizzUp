@@ -14,10 +14,9 @@ const products = [
   { name: 'Ice Cream', price: 35, stock: 25, category: 'Ice Cream', image: '' },
 ];
 
-// GET /api/seed  — run once to populate database
+// GET /api/seed?key=xxx
 router.get('/', async (req, res) => {
   try {
-    // Only allow in production with secret key
     const { key } = req.query;
     if (key !== process.env.JWT_SECRET) {
       return res.status(403).json({ message: 'Forbidden' });
@@ -28,19 +27,37 @@ router.get('/', async (req, res) => {
 
     await Product.insertMany(products);
 
-    await User.create({
+    // Create admin with explicit role
+    const admin = new User({
       name: 'Admin',
       email: 'admin@fizzup.com',
       password: 'admin123',
       role: 'admin',
     });
+    await admin.save();
+
+    // Verify role was saved
+    const savedAdmin = await User.findOne({ email: 'admin@fizzup.com' });
 
     res.json({
       success: true,
-      message: '✅ Database seeded successfully!',
+      message: '✅ Database seeded!',
       products: products.length,
-      admin: 'admin@fizzup.com / admin123',
+      admin: {
+        email: savedAdmin.email,
+        role: savedAdmin.role,
+      },
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// GET /api/seed/check — check current user roles
+router.get('/check', async (req, res) => {
+  try {
+    const users = await User.find({}).select('name email role');
+    res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
