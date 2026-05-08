@@ -1,18 +1,14 @@
 const Product = require('../models/Product');
-const path = require('path');
-const fs = require('fs');
+const { cloudinary } = require('../config/cloudinary');
 
 // @desc    Get all products
-// @route   GET /api/products
 const getProducts = async (req, res) => {
   try {
     const { category, search, active } = req.query;
     let query = {};
-
     if (category) query.category = category;
     if (active !== undefined) query.isActive = active === 'true';
     if (search) query.name = { $regex: search, $options: 'i' };
-
     const products = await Product.find(query).sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
@@ -21,7 +17,6 @@ const getProducts = async (req, res) => {
 };
 
 // @desc    Get single product
-// @route   GET /api/products/:id
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -33,12 +28,11 @@ const getProductById = async (req, res) => {
 };
 
 // @desc    Create product
-// @route   POST /api/products
 const createProduct = async (req, res) => {
   try {
     const { name, price, stock, category } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : '';
-
+    // Cloudinary gives full URL in req.file.path
+    const image = req.file ? req.file.path : '';
     const product = await Product.create({ name, price, stock, category, image });
     res.status(201).json(product);
   } catch (error) {
@@ -47,7 +41,6 @@ const createProduct = async (req, res) => {
 };
 
 // @desc    Update product
-// @route   PUT /api/products/:id
 const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -55,13 +48,14 @@ const updateProduct = async (req, res) => {
 
     const { name, price, stock, category, isActive } = req.body;
 
-    // If new image uploaded, delete old one
+    // If new image uploaded via Cloudinary
     if (req.file) {
-      if (product.image) {
-        const oldPath = path.join(__dirname, '..', product.image);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      // Delete old image from Cloudinary if exists
+      if (product.image && product.image.includes('cloudinary')) {
+        const publicId = product.image.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId).catch(() => {});
       }
-      product.image = `/uploads/${req.file.filename}`;
+      product.image = req.file.path;
     }
 
     if (name !== undefined) product.name = name;
@@ -78,15 +72,15 @@ const updateProduct = async (req, res) => {
 };
 
 // @desc    Delete product
-// @route   DELETE /api/products/:id
 const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    if (product.image) {
-      const imgPath = path.join(__dirname, '..', product.image);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+    // Delete from Cloudinary
+    if (product.image && product.image.includes('cloudinary')) {
+      const publicId = product.image.split('/').slice(-2).join('/').split('.')[0];
+      await cloudinary.uploader.destroy(publicId).catch(() => {});
     }
 
     await product.deleteOne();
@@ -97,7 +91,6 @@ const deleteProduct = async (req, res) => {
 };
 
 // @desc    Get low stock products
-// @route   GET /api/products/low-stock
 const getLowStock = async (req, res) => {
   try {
     const threshold = parseInt(req.query.threshold) || 10;
