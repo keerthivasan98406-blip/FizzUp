@@ -63,4 +63,27 @@ router.get('/check', async (req, res) => {
   }
 });
 
+// GET /api/seed/reset — clear ALL sales data, keep products & admin
+router.get('/reset', async (req, res) => {
+  try {
+    const { key } = req.query;
+    if (key !== process.env.JWT_SECRET) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const Sale = require('../models/Sale');
+
+    // Delete all sales/orders only
+    await Sale.deleteMany({});
+
+    res.json({
+      success: true,
+      message: '✅ All sales data cleared! App is fresh for client.',
+      note: 'Products and admin account are kept.',
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
