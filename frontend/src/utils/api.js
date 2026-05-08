@@ -1,18 +1,25 @@
 import axios from 'axios';
 
-// Same domain in production (backend serves frontend)
-// Vite proxy handles /api in development
+// In production on Render, backend and frontend are the SAME service
+// So /api works directly. But if separate, use VITE_API_URL env var.
+const baseURL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 15000,
 });
 
 api.interceptors.request.use(
   (config) => {
     const stored = localStorage.getItem('fizzup_user');
     if (stored) {
-      const { token } = JSON.parse(stored);
-      if (token) config.headers.Authorization = `Bearer ${token}`;
+      try {
+        const { token } = JSON.parse(stored);
+        if (token) config.headers.Authorization = `Bearer ${token}`;
+      } catch (e) {}
     }
     return config;
   },
