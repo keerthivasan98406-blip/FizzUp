@@ -45,7 +45,7 @@ export default function LoginPage() {
           >
             🥤
           </motion.div>
-          <h1 className="text-4xl font-black gold-text mb-1" style={{ fontFamily: 'Playfair Display, serif' }}>FizzUp</h1>
+          <h1 className="text-4xl font-black gold-text mb-1" style={{ fontFamily: 'Playfair Display, serif' }}>AS Shop Manager</h1>
           <p className="text-white/40 text-sm tracking-widest uppercase font-medium">Sales Management System</p>
         </div>
 
@@ -106,7 +106,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <p className="text-center text-white/20 text-xs mt-6">© 2024 FizzUp Sales Manager. All rights reserved.</p>
+        <p className="text-center text-white/20 text-xs mt-6">© 2024 AS Shop Manager. All rights reserved.</p>
       </motion.div>
     </div>
   );

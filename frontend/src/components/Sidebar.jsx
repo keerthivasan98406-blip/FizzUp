@@ -37,9 +37,9 @@ function SidebarContent({ onClose }) {
           </div>
           <div>
             <h1 className="font-black text-xl gold-text tracking-wide" style={{ fontFamily: 'Playfair Display, serif' }}>
-              FizzUp
+              AS Shop
             </h1>
-            <p className="text-xs text-white/30 font-medium tracking-widest uppercase">Sales Manager</p>
+            <p className="text-xs text-white/30 font-medium tracking-widest uppercase">Manager</p>
           </div>
         </div>
         <div className="gold-divider mt-4" />

@@ -1,7 +1,7 @@
 {
-  "name": "fizzup-backend",
+  "name": "as-shop-manager-backend",
   "version": "1.0.0",
-  "description": "FizzUp Sales Manager Backend",
+  "description": "AS Shop Manager Backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

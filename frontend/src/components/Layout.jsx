@@ -17,7 +17,7 @@ const pageTitles = {
 export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const title = pageTitles[location.pathname] || 'FizzUp';
+  const title = pageTitles[location.pathname] || 'AS Shop Manager';
 
   return (
     <div className="min-h-screen relative" style={{ background: '#0A0A0F' }}>
@@ -33,7 +33,7 @@ export default function Layout() {
           </button>
           <div className="flex items-center gap-2">
             <span className="text-xl">🥤</span>
-            <span className="font-black gold-text text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>FizzUp</span>
+            <span className="font-black gold-text text-lg" style={{ fontFamily: 'Playfair Display, serif' }}>AS Shop</span>
           </div>
         </header>
 
