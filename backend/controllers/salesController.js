@@ -279,6 +279,27 @@ const getDailyHistory = async (req, res) => {
   }
 };
 
+// @desc    Delete a sale and restore stock
+// @route   DELETE /api/sales/:id
+const deleteSale = async (req, res) => {
+  try {
+    const sale = await Sale.findById(req.params.id);
+    if (!sale) return res.status(404).json({ message: 'Sale not found' });
+
+    // Restore stock for each item
+    for (const item of sale.items) {
+      await Product.findByIdAndUpdate(item.productId, {
+        $inc: { stock: item.quantity },
+      });
+    }
+
+    await sale.deleteOne();
+    res.json({ message: 'Sale deleted and stock restored' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createSale,
   getSales,
@@ -287,4 +308,5 @@ module.exports = {
   getDashboardStats,
   getSaleById,
   getDailyHistory,
+  deleteSale,
 };

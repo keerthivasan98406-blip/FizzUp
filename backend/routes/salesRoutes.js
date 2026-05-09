@@ -8,6 +8,7 @@ const {
   getDashboardStats,
   getSaleById,
   getDailyHistory,
+  deleteSale,
 } = require('../controllers/salesController');
 const { protect } = require('../middleware/auth');
 
@@ -18,5 +19,6 @@ router.get('/daily-history', protect, getDailyHistory);
 router.get('/', protect, getSales);
 router.get('/:id', protect, getSaleById);
 router.post('/', protect, createSale);
+router.delete('/:id', protect, deleteSale);
 
 module.exports = router;
