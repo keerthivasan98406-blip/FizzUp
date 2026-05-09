@@ -32,6 +32,7 @@ export const getCategoryColor = (category) => {
     Milk: 'badge-yellow',
     Curd: 'badge-purple',
     Buttermilk: 'badge-gold',
+    Dairy: 'badge-yellow', // legacy
     Water: 'badge-blue',
     'Ice Cream': 'badge-red',
     Other: 'badge-blue',

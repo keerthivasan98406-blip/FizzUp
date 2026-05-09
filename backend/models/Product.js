@@ -18,6 +18,7 @@ const productSchema = new mongoose.Schema(
         'Water',
         'Ice Cream',
         'Other',
+        'Dairy', // kept for backward compatibility with old products
       ],
       default: 'Other',
     },

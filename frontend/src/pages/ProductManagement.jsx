@@ -6,7 +6,7 @@ import { formatCurrency, getCategoryColor, getProductEmoji } from '../utils/help
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const CATEGORIES = ['All', 'Soda', 'Juice', 'Milk', 'Curd', 'Buttermilk', 'Water', 'Ice Cream', 'Other'];
+const CATEGORIES = ['All', 'Soda', 'Juice', 'Milk', 'Curd', 'Buttermilk', 'Water', 'Ice Cream', 'Other', 'Dairy'];
 const CATEGORY_EMOJIS = {
   All: '🛒',
   Soda: '🥤',
@@ -17,6 +17,7 @@ const CATEGORY_EMOJIS = {
   Water: '💧',
   'Ice Cream': '🍦',
   Other: '📦',
+  Dairy: '🥛',
 };
 
 const ProductModal = ({ product, onClose, onSave }) => {
