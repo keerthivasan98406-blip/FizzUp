@@ -51,9 +51,9 @@ const getProductById = async (req, res) => {
 // @desc    Create product
 const createProduct = async (req, res) => {
   try {
-    const { name, price, stock, category, imageUrl } = req.body;
+    const { name, price, stock, category, imageUrl, size } = req.body;
     const image = await getImage(req.file, imageUrl);
-    const product = await Product.create({ name, price, stock, category, image });
+    const product = await Product.create({ name, price, stock, category, image, size });
     res.status(201).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -66,9 +66,8 @@ const updateProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    const { name, price, stock, category, isActive, imageUrl } = req.body;
+    const { name, price, stock, category, isActive, imageUrl, size } = req.body;
 
-    // Update image if new file or URL provided
     if (req.file || imageUrl) {
       product.image = await getImage(req.file, imageUrl);
     }
@@ -78,6 +77,7 @@ const updateProduct = async (req, res) => {
     if (stock !== undefined) product.stock = stock;
     if (category !== undefined) product.category = category;
     if (isActive !== undefined) product.isActive = isActive;
+    if (size !== undefined) product.size = size;
 
     const updated = await product.save();
     res.json(updated);
