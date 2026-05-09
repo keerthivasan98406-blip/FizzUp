@@ -10,7 +10,7 @@ const { protect, adminOnly } = require('../middleware/auth');
 // Store in memory as buffer — we'll convert to Base64 and save in MongoDB
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB max
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB max (mobile photos)
   fileFilter: (req, file, cb) => {
     const allowed = /jpeg|jpg|png|gif|webp/;
     if (allowed.test(file.mimetype)) cb(null, true);

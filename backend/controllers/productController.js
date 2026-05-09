@@ -1,9 +1,20 @@
 const Product = require('../models/Product');
+const sharp = require('sharp');
 
-// Convert buffer to Base64 data URL
-const toBase64 = (file) => {
-  if (!file) return null;
-  return `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+// Compress image and convert to Base64
+const processImage = async (file) => {
+  if (!file) return '';
+  try {
+    // Resize to max 400x400, compress to JPEG quality 70
+    const compressed = await sharp(file.buffer)
+      .resize(400, 400, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 70 })
+      .toBuffer();
+    return `data:image/jpeg;base64,${compressed.toString('base64')}`;
+  } catch (err) {
+    // Fallback: just convert as-is
+    return `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+  }
 };
 
 // @desc    Get all products
@@ -36,8 +47,7 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const { name, price, stock, category } = req.body;
-    // Convert uploaded image to Base64 and store in MongoDB
-    const image = req.file ? toBase64(req.file) : '';
+    const image = await processImage(req.file);
     const product = await Product.create({ name, price, stock, category, image });
     res.status(201).json(product);
   } catch (error) {
@@ -53,9 +63,7 @@ const updateProduct = async (req, res) => {
 
     const { name, price, stock, category, isActive } = req.body;
 
-    // Update image only if new one uploaded
-    if (req.file) product.image = toBase64(req.file);
-
+    if (req.file) product.image = await processImage(req.file);
     if (name !== undefined) product.name = name;
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
