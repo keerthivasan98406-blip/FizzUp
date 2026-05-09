@@ -6,8 +6,18 @@ import { formatCurrency, getCategoryColor, getProductEmoji } from '../utils/help
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-const CATEGORIES = ['All', 'Soda', 'Juice', 'Dairy', 'Water', 'Ice Cream', 'Other'];
-const CATEGORY_EMOJIS = { All: '🛒', Soda: '🥤', Juice: '🧃', Dairy: '🥛', Water: '💧', 'Ice Cream': '🍦', Other: '📦' };
+const CATEGORIES = ['All', 'Soda', 'Juice', 'Milk', 'Curd', 'Buttermilk', 'Water', 'Ice Cream', 'Other'];
+const CATEGORY_EMOJIS = {
+  All: '🛒',
+  Soda: '🥤',
+  Juice: '🧃',
+  Milk: '🥛',
+  Curd: '🍶',
+  Buttermilk: '🫙',
+  Water: '💧',
+  'Ice Cream': '🍦',
+  Other: '📦',
+};
 
 const ProductModal = ({ product, onClose, onSave }) => {
   const [form, setForm] = useState({

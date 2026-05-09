@@ -29,8 +29,10 @@ export const getCategoryColor = (category) => {
   const colors = {
     Soda: 'badge-blue',
     Juice: 'badge-green',
-    Dairy: 'badge-yellow',
-    Water: 'badge-purple',
+    Milk: 'badge-yellow',
+    Curd: 'badge-purple',
+    Buttermilk: 'badge-gold',
+    Water: 'badge-blue',
     'Ice Cream': 'badge-red',
     Other: 'badge-blue',
   };
