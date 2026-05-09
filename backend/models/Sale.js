@@ -22,9 +22,9 @@ const saleSchema = new mongoose.Schema(
 // Auto-generate bill number before saving
 saleSchema.pre('save', async function (next) {
   if (!this.billNumber) {
-    const count = await mongoose.model('Sale').countDocuments();
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    this.billNumber = `BILL-${dateStr}-${String(count + 1).padStart(4, '0')}`;
+    const timeStr = Date.now().toString().slice(-6); // last 6 digits of timestamp
+    this.billNumber = `BILL-${dateStr}-${timeStr}`;
   }
   next();
 });
