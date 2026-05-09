@@ -155,7 +155,7 @@ export default function ProductSales() {
       setLastBill(data);
       clearCart();
       fetchProducts(); // refresh stock
-      toast.success(`Sale saved! Bill: ${data.billNumber} 🎉`);
+      toast.success('Sale saved! ✅');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save sale');
     } finally {
@@ -309,7 +309,7 @@ export default function ProductSales() {
                     <MdPrint size={16} /> Print
                   </button>
                 </div>
-                <p className="text-xs text-white/40 mb-3">{lastBill.billNumber}</p>
+                <p className="text-xs text-white/40 mb-3">{new Date(lastBill.date || lastBill.createdAt).toLocaleString('en-IN')}</p>
                 {lastBill.items.map((item, i) => (
                   <div key={i} className="flex justify-between text-sm py-1 border-b border-white/5">
                     <span className="text-white/70">{item.productName} × {item.quantity}</span>

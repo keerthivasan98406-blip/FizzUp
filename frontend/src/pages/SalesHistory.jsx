@@ -10,14 +10,13 @@ const SaleRow = ({ sale, onDelete }) => {
   const [expanded, setExpanded] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
+  const saleDate = new Date(sale.date || sale.createdAt);
+
   return (
     <>
       <tr className="hover:bg-white/3 transition-colors">
-        <td className="px-4 py-3 cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          <span className="badge badge-gold text-xs">{sale.billNumber}</span>
-        </td>
         <td className="px-4 py-3 text-white/70 text-sm cursor-pointer" onClick={() => setExpanded(!expanded)}>
-          {formatDateTime(sale.date)}
+          {formatDateTime(saleDate)}
         </td>
         <td className="px-4 py-3 text-white/70 text-sm cursor-pointer" onClick={() => setExpanded(!expanded)}>
           {sale.items.length} item(s)
@@ -43,16 +42,12 @@ const SaleRow = ({ sale, onDelete }) => {
               </button>
             ) : (
               <div className="flex items-center gap-1">
-                <button
-                  onClick={() => onDelete(sale._id)}
-                  style={{ padding: '3px 10px', borderRadius: 8, background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
-                >
+                <button onClick={() => onDelete(sale._id)}
+                  style={{ padding: '3px 10px', borderRadius: 8, background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
                   Yes
                 </button>
-                <button
-                  onClick={() => setConfirmDelete(false)}
-                  style={{ padding: '3px 10px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(232,232,240,0.6)', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
-                >
+                <button onClick={() => setConfirmDelete(false)}
+                  style={{ padding: '3px 10px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(232,232,240,0.6)', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
                   No
                 </button>
               </div>
@@ -208,7 +203,6 @@ export default function SalesHistory() {
             <table className="royal-table">
               <thead>
                 <tr>
-                  <th>Bill No.</th>
                   <th>Date & Time</th>
                   <th>Items</th>
                   <th>Total</th>

@@ -14,19 +14,8 @@ const saleSchema = new mongoose.Schema(
     grandTotal: { type: Number, required: true },
     date: { type: Date, default: Date.now },
     note: { type: String, default: '' },
-    billNumber: { type: String, unique: true },
   },
   { timestamps: true }
 );
-
-// Auto-generate bill number before saving
-saleSchema.pre('save', async function (next) {
-  if (!this.billNumber) {
-    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-    const timeStr = Date.now().toString().slice(-6); // last 6 digits of timestamp
-    this.billNumber = `BILL-${dateStr}-${timeStr}`;
-  }
-  next();
-});
 
 module.exports = mongoose.model('Sale', saleSchema);

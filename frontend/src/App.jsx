@@ -10,6 +10,7 @@ import SalesHistory from './pages/SalesHistory';
 import MonthlyReport from './pages/MonthlyReport';
 import StockManagement from './pages/StockManagement';
 import LoadingSpinner from './components/LoadingSpinner';
+import { getFormSubmissionInfo } from 'react-router-dom/dist/dom';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
