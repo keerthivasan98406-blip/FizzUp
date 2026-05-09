@@ -1,20 +1,25 @@
 const Product = require('../models/Product');
 const sharp = require('sharp');
 
-// Compress image and convert to Base64
+// Compress uploaded file to Base64
 const processImage = async (file) => {
   if (!file) return '';
   try {
-    // Resize to max 400x400, compress to JPEG quality 70
     const compressed = await sharp(file.buffer)
       .resize(400, 400, { fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: 70 })
       .toBuffer();
     return `data:image/jpeg;base64,${compressed.toString('base64')}`;
   } catch (err) {
-    // Fallback: just convert as-is
     return `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
   }
+};
+
+// Get image — either from uploaded file or URL
+const getImage = async (file, imageUrl) => {
+  if (file) return await processImage(file);
+  if (imageUrl && imageUrl.trim()) return imageUrl.trim();
+  return '';
 };
 
 // @desc    Get all products
@@ -46,8 +51,8 @@ const getProductById = async (req, res) => {
 // @desc    Create product
 const createProduct = async (req, res) => {
   try {
-    const { name, price, stock, category } = req.body;
-    const image = await processImage(req.file);
+    const { name, price, stock, category, imageUrl } = req.body;
+    const image = await getImage(req.file, imageUrl);
     const product = await Product.create({ name, price, stock, category, image });
     res.status(201).json(product);
   } catch (error) {
@@ -61,9 +66,13 @@ const updateProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    const { name, price, stock, category, isActive } = req.body;
+    const { name, price, stock, category, isActive, imageUrl } = req.body;
 
-    if (req.file) product.image = await processImage(req.file);
+    // Update image if new file or URL provided
+    if (req.file || imageUrl) {
+      product.image = await getImage(req.file, imageUrl);
+    }
+
     if (name !== undefined) product.name = name;
     if (price !== undefined) product.price = price;
     if (stock !== undefined) product.stock = stock;
