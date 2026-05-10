@@ -8,6 +8,16 @@ const connectDB = async () => {
       connectTimeoutMS: 30000,
     });
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+
+    // Auto-drop old billNumber index if it exists
+    try {
+      const Sale = require('../models/Sale');
+      await Sale.collection.dropIndex('billNumber_1');
+      console.log('✅ Dropped old billNumber index');
+    } catch (e) {
+      // Index doesn't exist - that's fine
+    }
+
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
     process.exit(1);

@@ -45,6 +45,7 @@ const createSale = async (req, res) => {
     const sale = await Sale.create({ items: saleItems, grandTotal, note });
     res.status(201).json(sale);
   } catch (error) {
+    console.error('Sale creation error:', error.message);
     res.status(500).json({ message: error.message });
   }
 };
