@@ -87,4 +87,24 @@ router.get('/reset', async (req, res) => {
   }
 });
 
+// GET /api/seed/fix-index — drop the old billNumber index
+router.get('/fix-index', async (req, res) => {
+  try {
+    const { key } = req.query;
+    if (key !== process.env.JWT_SECRET) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+    const Sale = require('../models/Sale');
+    // Drop the billNumber index if it exists
+    try {
+      await Sale.collection.dropIndex('billNumber_1');
+      res.json({ success: true, message: '✅ billNumber index dropped! Sales will work now.' });
+    } catch (e) {
+      res.json({ success: true, message: 'Index not found or already dropped: ' + e.message });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
